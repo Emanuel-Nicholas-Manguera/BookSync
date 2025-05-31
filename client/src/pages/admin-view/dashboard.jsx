@@ -14,6 +14,10 @@ function AdminDashboard() {
   console.log(uploadedImageUrl, "uploadedImageUrl");
 
   function handleUploadFeatureImage() {
+    if (!uploadedImageUrl) {
+      alert("Please select and upload an image first");
+      return;
+    }
     dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
       if (data?.payload?.success) {
         dispatch(getFeatureImages());
