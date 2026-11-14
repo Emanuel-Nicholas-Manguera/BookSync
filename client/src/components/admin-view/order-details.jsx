@@ -16,7 +16,7 @@ const initialFormData = {
   status: "",
 };
 
-function AdminOrderDetailsView({ orderDetails }) {
+function AdminOrderDetailsView({ orderDetails, onClose }) {
   const [formData, setFormData] = useState(initialFormData);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -38,6 +38,12 @@ function AdminOrderDetailsView({ orderDetails }) {
         toast({
           title: data?.payload?.message,
         });
+        // Close the dialog after successful update
+        if (onClose) {
+          setTimeout(() => {
+            onClose();
+          }, 1000); // Small delay to show the success message
+        }
       }
     });
   }
@@ -70,15 +76,27 @@ function AdminOrderDetailsView({ orderDetails }) {
             <p className="font-medium">Order Status</p>
             <Label>
               <Badge
-                className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
+                className={`py-1 px-3 text-white w-[95px] text-center whitespace-nowrap flex items-center justify-center ${
+                  orderDetails?.orderStatus === "delivered"
+                    ? "bg-[#66BB6A] hover:bg-[#5CAD60]"
                     : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
+                    ? "bg-[#EF5350] hover:bg-[#E53E3E]"
+                    : orderDetails?.orderStatus === "inShipping"
+                    ? "bg-[#FFA726] hover:bg-[#FB8C00]"
+                    : orderDetails?.orderStatus === "inProcess"
+                    ? "bg-[#42A5F5] hover:bg-[#2196F3]"
+                    : "bg-[#B0BEC5] hover:bg-[#90A4AE]"
                 }`}
               >
-                {orderDetails?.orderStatus}
+                {orderDetails?.orderStatus === "delivered"
+                  ? "Delivered"
+                  : orderDetails?.orderStatus === "rejected"
+                  ? "Rejected"
+                  : orderDetails?.orderStatus === "inShipping"
+                  ? "In Shipping"
+                  : orderDetails?.orderStatus === "inProcess"
+                  ? "In Process"
+                  : "Pending"}
               </Badge>
             </Label>
           </div>

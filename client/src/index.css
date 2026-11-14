@@ -67,3 +67,170 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Responsive transitions for smooth layout changes */
+@layer components {
+  .responsive-grid {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .responsive-card {
+    transition: all 0.2s ease-in-out;
+  }
+
+  .responsive-text {
+    transition: font-size 0.2s ease-in-out;
+  }
+
+  .responsive-spacing {
+    transition: padding 0.2s ease-in-out, margin 0.2s ease-in-out;
+  }
+}
+
+/* Ensure grid layouts respond instantly */
+.grid {
+  transition: grid-template-columns 0.2s ease-in-out;
+}
+
+/* Chart container responsive behavior */
+.chart-container {
+  transition: height 0.3s ease-in-out;
+}
+
+/* Smooth responsive transitions for dashboard */
+@media (prefers-reduced-motion: no-preference) {
+  .dashboard-container {
+    transition: all 0.2s ease-in-out;
+  }
+
+  .dashboard-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .dashboard-text {
+    transition: font-size 0.15s ease-in-out;
+  }
+}
+
+/* Prevent browser window from being resized too small */
+@media screen {
+  html {
+    min-width: 400px;
+    min-height: 600px;
+  }
+
+  body {
+    min-width: 400px;
+    min-height: 600px;
+    overflow-x: auto;
+  }
+}
+
+/* Container minimum width to prevent layout destruction */
+.min-layout-protection {
+  min-width: 320px;
+  max-width: 100vw;
+  overflow-x: auto;
+}
+
+/* Text utilities for responsive design */
+@layer utilities {
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.4;
+  }
+
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-height: 1.4;
+  }
+}
+
+/* Enhanced responsive grid behavior */
+@layer utilities {
+  .responsive-grid-auto-fit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: 1rem;
+  }
+
+  .responsive-grid-auto-fill {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 1rem;
+  }
+
+  /* Product tile specific responsive utilities */
+  .product-tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  @media (min-width: 640px) {
+    .product-tile-grid {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+      gap: 1rem;
+      align-items: stretch;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .product-tile-grid {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-tile-grid {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+  }
+
+  /* Enhanced responsive image behavior */
+  .responsive-product-image {
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .responsive-product-image:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* Container responsive behavior */
+@media (max-width: 400px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 639px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Ensure content doesn't break below minimum viewport */
+@media (max-width: 399px) {
+  body {
+    transform: scale(0.8);
+    transform-origin: top left;
+    width: 125%;
+    height: 125%;
+  }
+}

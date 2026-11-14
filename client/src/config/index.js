@@ -66,7 +66,7 @@ export const addProductFormElements = [
     ],
   },
   {
-    label: "Brand",
+    label: "Type",
     name: "brand",
     componentType: "select",
     options: [
@@ -76,6 +76,19 @@ export const addProductFormElements = [
       { id: "levi", label: "Levi's" },
       { id: "zara", label: "Zara" },
       { id: "h&m", label: "H&M" },
+    ],
+  },
+  {
+    label: "Genre",
+    name: "genre",
+    componentType: "select",
+    options: [
+      { id: "fiction", label: "Fiction" },
+      { id: "non-fiction", label: "Non-Fiction" },
+      { id: "romance", label: "Romance" },
+      { id: "mystery", label: "Mystery" },
+      { id: "sci-fi", label: "Sci-Fi" },
+      { id: "fantasy", label: "Fantasy" },
     ],
   },
   {
@@ -113,24 +126,19 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing",
   },
   {
-    id: "men",
+    id: "about",
     label: "About",
-    path: "/shop/listing",
+    path: "/shop/about",
   },
   {
-    id: "women",
+    id: "contact",
     label: "Contact",
-    path: "/shop/listing",
+    path: "/shop/contact",
   },
   {
-    id: "kids",
+    id: "store",
     label: "Store",
-    path: "/shop/listing",
-  },
-  {
-    id: "search",
-    label: "Search",
-    path: "/shop/search",
+    path: "/shop/store",
   },
 ];
 
@@ -149,6 +157,42 @@ export const brandOptionsMap = {
   levi: "Levi",
   zara: "Zara",
   "h&m": "H&M",
+};
+
+export const genreOptionsMap = {
+  fiction: "Fiction",
+  "non-fiction": "Non-Fiction",
+  romance: "Romance",
+  mystery: "Mystery",
+  "sci-fi": "Sci-Fi",
+  fantasy: "Fantasy",
+  action: "Action",
+  // Add any additional genres that might be created dynamically
+  // These will automatically match the converted IDs from admin form
+};
+
+// Helper function to get genre display name by ID or name
+export const getGenreDisplayName = (genreId, genreList = []) => {
+  if (!genreId) return '';
+
+  // First try to find by exact ID match in the dynamic list
+  const foundByIdInList = genreList.find(item => item._id === genreId);
+  if (foundByIdInList) return foundByIdInList.name;
+
+  // Try to find by name in the dynamic list (case insensitive)
+  const foundByNameInList = genreList.find(item =>
+    item.name.toLowerCase() === genreId.toLowerCase()
+  );
+  if (foundByNameInList) return foundByNameInList.name;
+
+  // Fallback to static map
+  const staticResult = genreOptionsMap[genreId];
+  if (staticResult) return staticResult;
+
+  // If nothing found, capitalize the input as fallback
+  return genreId.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };
 
 export const filterOptions = {
@@ -192,11 +236,11 @@ export const addressFormControls = [
     placeholder: "Enter your city",
   },
   {
-    label: "Pincode",
+    label: "Zip Code",
     name: "pincode",
     componentType: "input",
     type: "text",
-    placeholder: "Enter your pincode",
+    placeholder: "Enter your zip code",
   },
   {
     label: "Phone",

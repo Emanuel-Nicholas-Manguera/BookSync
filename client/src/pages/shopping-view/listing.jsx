@@ -50,6 +50,12 @@ function ShoppingListing() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { toast } = useToast();
 
+  function handleResetFilters() {
+    setFilters({});
+    sessionStorage.removeItem("filters");
+    setSearchParams(new URLSearchParams());
+  }
+
   const categorySearchParam = searchParams.get("category");
 
   function handleSort(value) {
@@ -57,6 +63,9 @@ function ShoppingListing() {
   }
 
   function handleFilter(getSectionId, getCurrentOption) {
+    console.log("handleFilter called with:", { getSectionId, getCurrentOption });
+    console.log("Current filters before change:", filters);
+
     let cpyFilters = { ...filters };
     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
 
@@ -74,6 +83,7 @@ function ShoppingListing() {
       else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
     }
 
+    console.log("New filters after change:", cpyFilters);
     setFilters(cpyFilters);
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
@@ -133,10 +143,13 @@ function ShoppingListing() {
   }, [filters]);
 
   useEffect(() => {
-    if (filters !== null && sort !== null)
+    console.log("Effect triggered with filters:", filters, "and sort:", sort);
+    if (filters !== null && sort !== null) {
+      console.log("Dispatching fetchAllFilteredProducts with:", { filterParams: filters, sortParams: sort });
       dispatch(
         fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
       );
+    }
   }, [dispatch, sort, filters]);
 
   useEffect(() => {
@@ -146,8 +159,9 @@ function ShoppingListing() {
   console.log(productList, "productListproductListproductList");
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
-      <ProductFilter filters={filters} handleFilter={handleFilter} />
+    <div className="container mx-auto px-4 md:px-6 py-4 md:py-6">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 min-layout-protection">
+      <ProductFilter filters={filters} handleFilter={handleFilter} handleResetFilters={handleResetFilters} />
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-extrabold">All Products</h2>
@@ -181,7 +195,7 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+        <div className="product-tile-grid p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
                 <ShoppingProductTile
@@ -198,6 +212,7 @@ function ShoppingListing() {
         setOpen={setOpenDetailsDialog}
         productDetails={productDetails}
       />
+      </div>
     </div>
   );
 }

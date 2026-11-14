@@ -5,12 +5,20 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import { Toaster } from "./components/ui/toaster.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-createRoot(document.getElementById("root")).render(
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const app = (
   <BrowserRouter>
     <Provider store={store}>
       <App />
       <Toaster />
     </Provider>
   </BrowserRouter>
+);
+
+createRoot(document.getElementById("root")).render(
+  googleClientId ? (
+    <GoogleOAuthProvider clientId={googleClientId}>{app}</GoogleOAuthProvider>
+  ) : app
 );

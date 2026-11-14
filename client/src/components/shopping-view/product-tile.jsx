@@ -1,71 +1,96 @@
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
-import { brandOptionsMap, categoryOptionsMap } from "@/config";
+import { brandOptionsMap, categoryOptionsMap, getGenreDisplayName } from "@/config";
 import { Badge } from "../ui/badge";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function ShoppingProductTile({
   product,
   handleGetProductDetails,
   handleAddtoCart,
 }) {
+  const [genreList, setGenreList] = useState([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get("/api/genres");
+        setGenreList(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
   return (
-    <Card className="w-full max-w-sm mx-auto">
-      <div onClick={() => handleGetProductDetails(product?._id)}>
-        <div className="relative">
+    <Card className="w-full max-w-xs mx-auto responsive-card hover:shadow-lg transition-shadow duration-200 h-full flex flex-col">
+      <div onClick={() => handleGetProductDetails(product?._id)} className="cursor-pointer flex-1 flex flex-col">
+        <div className="relative overflow-hidden aspect-[4/3] bg-white">
           <img
             src={product?.image}
             alt={product?.title}
-            className="w-full h-[400px] object-cover rounded-t-lg"
+            className="w-full h-full object-contain rounded-t-lg transition-transform duration-300 hover:scale-105"
           />
           {product?.totalStock === 0 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+            <Badge className="absolute top-1 left-1 xs:top-2 xs:left-2 bg-red-500 hover:bg-red-600 text-xs">
               Out Of Stock
             </Badge>
           ) : product?.totalStock < 10 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
-              {`Only ${product?.totalStock} items left`}
+            <Badge className="absolute top-1 left-1 xs:top-2 xs:left-2 bg-red-500 hover:bg-red-600 text-xs">
+              {`Only ${product?.totalStock} left`}
             </Badge>
           ) : product?.salePrice > 0 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+            <Badge className="absolute top-1 left-1 xs:top-2 xs:left-2 bg-red-500 hover:bg-red-600 text-xs">
               Sale
             </Badge>
           ) : null}
         </div>
-        <CardContent className="p-4">
-          <h2 className="text-xl font-bold mb-2">{product?.title}</h2>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[16px] text-muted-foreground">
-              {categoryOptionsMap[product?.category]}
-            </span>
-            <span className="text-[16px] text-muted-foreground">
-              {brandOptionsMap[product?.brand]}
-            </span>
+        <CardContent className="p-2 xs:p-3 flex-1 flex flex-col">
+          <h2 className="text-sm xs:text-base font-semibold mb-1 truncate leading-tight">{product?.title}</h2>
+          <div className="flex flex-wrap gap-1 mb-2 text-xs min-h-[20px]">
+            {product?.category && (
+              <Badge variant="secondary" className="text-[10px] px-1 py-0">
+                {categoryOptionsMap[product?.category] || product?.category}
+              </Badge>
+            )}
+            {product?.brand && (
+              <Badge variant="outline" className="text-[10px] px-1 py-0">
+                {brandOptionsMap[product?.brand] || product?.brand}
+              </Badge>
+            )}
+            {product?.genre && (
+              <Badge variant="default" className="text-[10px] px-1 py-0">
+                {getGenreDisplayName(product?.genre, genreList)}
+              </Badge>
+            )}
           </div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mt-auto">
             <span
               className={`${
-                product?.salePrice > 0 ? "line-through" : ""
-              } text-lg font-semibold text-primary`}
+                product?.salePrice > 0 ? "line-through text-muted-foreground" : "text-primary"
+              } text-sm font-semibold`}
             >
               ₱{product?.price}
             </span>
             {product?.salePrice > 0 ? (
-              <span className="text-lg font-semibold text-primary">
+              <span className="text-sm font-bold text-primary">
                 ₱{product?.salePrice}
               </span>
             ) : null}
           </div>
         </CardContent>
       </div>
-      <CardFooter>
+      <CardFooter className="p-2 xs:p-3 pt-0 mt-auto">
         {product?.totalStock === 0 ? (
-          <Button className="w-full opacity-60 cursor-not-allowed">
+          <Button className="w-full opacity-60 cursor-not-allowed text-xs h-8">
             Out Of Stock
           </Button>
         ) : (
           <Button
             onClick={() => handleAddtoCart(product?._id, product?.totalStock)}
-            className="w-full"
+            className="w-full text-xs h-8 hover:bg-primary/90 transition-colors"
           >
             Add to cart
           </Button>
